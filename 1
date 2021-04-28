@@ -1,0 +1,19 @@
+import pandas as pd
+
+def get_load(df):
+
+    df = df.drop(['Zone Name', 'Zone PTID'], axis=1)
+    # reformat the datetime
+    df['RTD End Time Stamp'] = pd.to_datetime(df['RTD End Time Stamp'], format='%Y-%m-%d')
+    s = df.resample('H', on='RTD End Time Stamp').mean()
+    s.reset_index(level=0,
+                  inplace=True)  # Default dataframe has the time as index, you need this so that time is a column
+    s = s.rename(columns={'RTD End Time Stamp': 'Time'})
+    s = s.rename(columns={'RTD Actual Load': 'Total_Load'})
+    return s
+
+if __name__ == "__main__":
+    load=pd.read_csv('./2010.csv')
+    load = get_load(load)
+    print(load)
+    load.pivot(index='Time.Hour', columns='Time.Month', values='Total_load')
