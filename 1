@@ -16,4 +16,5 @@ if __name__ == "__main__":
     load=pd.read_csv('./2010.csv')
     load = get_load(load)
     print(load)
-    load.pivot(index='Time.Hour', columns='Time.Month', values='Total_load')
+    p = load.pivot(index=load.Time.month, columns=load.Time.hour, values=load.Total_load)
+    plt.contour(p.index.values, p.columns.values, p.values)
